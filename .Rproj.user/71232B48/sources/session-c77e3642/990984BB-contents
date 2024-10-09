@@ -1,0 +1,144 @@
+ 
+--------------------------
+
+# Example data (replace with actual dataset and geolocation data)
+
+year <- c(2018, 2019, 2020, 2021, 2022, 2023)
+male_income <- c(80000, 82000, 85000, 83700, 86000, 88000)  # Add data for 2022 and 2023
+female_income <- c(65000, 66000, 68000, 65700, 67000, 69000)  # Add data for 2022 and 2023
+
+time_data <- data.frame(year, male_income, female_income)
+
+# Melt the data for ggplot
+time_data_melted <- melt(time_data, id.vars = "year", variable.name = "gender", value.name = "income")
+
+# Create the ggplot time series
+p_time_series <- ggplot(time_data_melted, aes(x = year, y = income, color = gender, group = gender)) +
+  geom_line(size = 1.2) +
+  geom_point(size = 3) +
+  theme_minimal() +
+  labs(title = "Interactive Time Series: Male vs Female Income Over Time",
+       x = "Year", y = "Income (in USD)") +
+  scale_color_manual(values = c("male_income" = "blue", "female_income" = "pink"),
+                     labels = c("Men", "Women"), name = "Gender")
+
+# Make the ggplot interactive using plotly
+p_time_series_interactive <- ggplotly(p_time_series)
+
+# Display the interactive plot
+print(p_time_series_interactive)
+--------------------
+
+# Data for male and female income across industries
+industry <- c("Finance", "Manufacturing", "Agriculture", "IT", "Healthcare", "Retail Trade", 
+              "Construction", "Education", "Transportation", "Energy")
+male_income <- c(75900, 52700, 33700, 46400, 58300, 41400, 83700, 65400, 52700, 85000)
+female_income <- c(63500, 45900, 30000, 39800, 49800, 35100, 65700, 54200, 45900, 73000)
+
+# Create a data frame
+data <- data.frame(industry, male_income, female_income)
+
+# Step 1: Create the scatter plot
+ggplot(data, aes(x = male_income, y = female_income, color = industry)) +
+  geom_point(size = 5) +  # Create the scatter points
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "black") +  # Add diagonal line (y = x)
+  labs(title = "Scatter Plot of Male vs Female Income by Industry",
+       x = "Male Income (in USD)", y = "Female Income (in USD)", color = "Industry") +
+  theme_minimal() +
+  scale_color_brewer(palette = "Set1") +  # Use a color palette for the points
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),  # Angle the x-axis labels for clarity
+        legend.position = "right")  # Position the legend on the right
+-------------
+  
+  # Load necessary libraries #FINALIZED DESIGN
+
+ # To format the axis
+
+# Sample dataset: Income for men and women over 5 years across different industries
+data2 <- data.frame(
+  year = rep(2015:2019, each = 5),
+  industry = rep(c("Healthcare", "Finance", "Education", "Technology", "Retail"), times = 5),
+  male_income = c(70000, 90000, 60000, 100000, 40000,   # 2015
+                  71000, 92000, 61000, 103000, 41000,   # 2016
+                  72000, 94000, 62000, 106000, 42000,   # 2017
+                  73000, 96000, 63000, 109000, 43000,   # 2018
+                  74000, 98000, 64000, 112000, 44000),  # 2019
+  female_income = c(65000, 85000, 55000, 90000, 38000,   # 2015
+                    66000, 87000, 56000, 93000, 39000,   # 2016
+                    67000, 89000, 57000, 96000, 40000,   # 2017
+                    68000, 91000, 58000, 99000, 41000,   # 2018
+                    69000, 93000, 59000, 102000, 42000)  # 2019
+)
+
+# Melt the data to a long format for ggplot
+data_melted1 <- melt(data2, id.vars = c("year", "industry"), variable.name = "gender", value.name = "income")
+
+# Custom labeling function to show in thousands (e.g., 50,000 as 50k)
+k_formatter <- function(x) {
+  return(paste0(x / 1000, "k"))
+}
+
+# Plot the line chart to visualize income growth over time by industry and gender
+ggplot(data_melted1, aes(x = year, y = income, color = gender, linetype = gender, group = interaction(gender, industry))) +
+  geom_line(size = 1) +  # Line plot
+  facet_wrap(~ industry) +  # Separate plots for each industry
+  labs(title = "Income Growth Rate by Industry (Men vs Women)", 
+       x = "Year", 
+       y = "Income (in USD)", 
+       color = "Gender", 
+       linetype = "Gender") +
+  scale_color_manual(values = c("male_income" = "blue", "female_income" = "pink"),
+                     labels = c("Men", "Women")) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_y_continuous(labels = k_formatter)  # Format the y-axis in thousands with 'k'
+---------------------------
+
+occupation <- c("Healthcare", "Finance", "Education", "Technology", "Retail", "Manufacturing")
+men_satisfaction <- c(70, 80, 75, 85, 65, 60)   # Satisfaction levels for men (out of 100)
+women_satisfaction <- c(75, 85, 80, 80, 70, 65)  # Satisfaction levels for women (out of 100)
+men_income <- c(70000, 90000, 60000, 100000, 40000, 55000)
+women_income <- c(65000, 85000, 55000, 90000, 38000, 50000)
+
+# Create a data frame with satisfaction and income for men and women
+data_satisfaction <- data.frame(
+  occupation = rep(occupation, 2),  # Repeat occupation for men and women
+  satisfaction = c(men_satisfaction, women_satisfaction),
+  income = c(men_income, women_income),
+  gender = rep(c("Men", "Women"), each = length(occupation))
+)
+
+# Create the bubble chart with income in 'k' format
+ggplot(data_satisfaction, aes(x = occupation, y = satisfaction, size = income, color = gender)) +
+  geom_point(alpha = 0.7) +  # Add transparency to the bubbles
+  scale_size_continuous(range = c(5, 15), labels = scales::label_number(scale = 1e-3, suffix = "k")) +  # Format size labels in 'k'
+  labs(title = "Job Satisfaction Levels by Occupation",
+       x = "Occupation", y = "Satisfaction Level (out of 100)",
+       size = "Income (in USD)", color = "Gender") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+---------------------
+  
+# Sample data: Industry and average tenure for men and women
+data_butterfly <- data.frame(
+    industry = c("Finance", "Healthcare", "Education", "Technology", "Retail", "Manufacturing"),
+    male_tenure = c(10, 12, 9, 14, 8, 11),      # Average years of service for men
+    female_tenure = c(8, 10, 7, 12, 9, 10)      # Average years of service for women
+  )
+
+# Create a butterfly chart
+ggplot(data_butterfly) +
+  # Create male bar on the left (negative to flip it)
+  geom_bar(aes(x = industry, y = -male_tenure, fill = "Male"), stat = "identity") +
+  # Create female bar on the right
+  geom_bar(aes(x = industry, y = female_tenure, fill = "Female"), stat = "identity") +
+  coord_flip() +  # Flip coordinates to make it horizontal
+  scale_y_continuous(labels = abs) +  # Make y-axis labels positive
+  labs(title = "Average Tenure by Industry and Gender (Butterfly Chart)",
+       x = "Industry",
+       y = "Average Tenure (Years)",
+       fill = "Gender") +
+  scale_fill_manual(values = c("Male" = "steelblue", "Female" = "pink")) +
+  theme_minimal() + 
+  theme(axis.text.y = element_text(size = 12), axis.title.x = element_text(size = 14))
+

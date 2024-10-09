@@ -1,0 +1,53 @@
+"0","library(dplyr)"
+"2","
+Attaching package: ‘dplyr’
+
+"
+"2","The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+"
+"2","The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+"
+"0","library(tidyr)"
+"2","
+Attaching package: ‘tidyr’
+
+"
+"2","The following object is masked from ‘package:reshape2’:
+
+    smiths
+
+"
+"0","library(ggplot2)"
+"0","library(plotly)"
+"0",""
+"0","Jobs <- c(""Construction"", ""Finance"", ""Education"", ""Healthcare"", ""Manufacturing"", ""IT"", ""Retail Trade"", ""Agriculture"")"
+"0","Mincome <- c(83700, 75900, 65400, 58300, 52700, 46400, 41400, 33700)"
+"0","Fincome <- c(65700, 63500, 54200, 49800, 45900, 39800, 35100, 30000)"
+"0",""
+"0","data1 <- data.frame(Jobs, Mincome, Fincome)"
+"0",""
+"0",""
+"0","melted <- data1 %>%"
+"0","  pivot_longer(cols = c(Mincome, Fincome), "
+"0","               names_to = ""gender"", values_to = ""income"")"
+"0",""
+"0",""
+"0","result <- ggplot(melted, aes(x = Jobs, y = income, fill = gender)) +"
+"0","  geom_bar(position = position_dodge(width = 0.9), stat = ""identity"", width = 0.7) +  "
+"0","  theme_minimal() +"
+"0","  labs(title = ""Income Comparison by Industry (Men vs Women)"","
+"0","       x = ""Industry"", y = ""Income (in USD)"") +"
+"0","  scale_fill_manual(values = c(""Mincome"" = ""steelblue4"", ""Fincome"" = ""skyblue""),"
+"0","                    labels = c(""Men"", ""Women""), name = ""Gender"") +"
+"0","  theme(axis.text.x = element_text(angle = 45, hjust = 1))"
+"0",""
+"0",""
+"0","final_result <- ggplotly(result)"
+"0",""
+"0","final_result"

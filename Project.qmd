@@ -1,0 +1,325 @@
+---
+title: "Project"
+---
+
+**Bad Graph**
+
+Income comparison between Men and Women
+
+![](images/WhatsApp%20Image%202024-10-08%20at%2013.11.08_477ab274.jpg)
+
+The above graph is a radial bar chart showing the median annual earnings of men and women, categorised by industry, for civilian employed population aged 16 years and above in the U.S. The chart compares income ranges in which different color depths of blue and red denote greater than \$80K and less than \$20K, respectively. Each industry forms a sector around the circle and gender wise bar for men and women to have the overview of gender wage differential for each industry.
+
+**Analysis of the bad graph:**
+
+*Values are Hard to Compare :* It becomes virtually impossible to attempt any sort of comparison of income disparities across different industries when some of categories are located quite a distance away from others around the circumference of the circle in radial form.
+
+*Inefficient Use of Space and Labeling :* The circular design bends the bar lengths and since the values are in income, the figures are almost challenging to classify nearer to the center.
+
+*Color and Accessibility Issues :* The blue for man and the red for woman barely differs and this feature makes it relatively difficult to be understood, particularly by individuals with color vision deficiency.
+
+## Interactive Bar Chart (Redesigned Visual 1)
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(plotly)
+
+Jobs <- c("Construction", "Finance", "Education", "Healthcare", "Manufacturing", "IT", "Retail Trade", "Agriculture")
+Mincome <- c(83700, 75900, 65400, 58300, 52700, 46400, 41400, 33700)
+Fincome <- c(65700, 63500, 54200, 49800, 45900, 39800, 35100, 30000)
+
+data1 <- data.frame(Jobs, Mincome, Fincome)
+
+
+melted <- data1 %>%
+  pivot_longer(cols = c(Mincome, Fincome), 
+               names_to = "gender", values_to = "income")
+
+
+result <- ggplot(melted, aes(x = Jobs, y = income, fill = gender)) +
+  geom_bar(position = position_dodge(width = 0.9), stat = "identity", width = 0.7) +  
+  theme_minimal() +
+  labs(title = "Income Comparison by Industry (Men vs Women)",
+       x = "Industry", y = "Income (in USD)") +
+  scale_fill_manual(values = c("Mincome" = "steelblue4", "Fincome" = "skyblue"),
+                    labels = c("Men", "Women"), name = "Gender") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+final_result <- ggplotly(result)
+
+final_result
+
+
+```
+
+**About the chart**
+
+1.  **⁠***Comparison of Men and Women’s Income by Industry :* The bar chart represents the contrast between men income; generally, labeled as Mincome and women income; generally labeled as Fincome, by industries that include agriculture, construction, education, finance, healthcare, information technology, manufacturing, and retail trade.
+2.  *Bar Representation :* Each industry has two bars; the dark blue bar to indicate the Median men’s income and the lighter blue bar to indicate Median women’s income. This also ensures that there are two important documents: one to compare with the other.
+3.  *Interactivity :* The income magnitude for each industry is represented, and viewers can obtain more specific values in the form of just a number by hovering the pointer over each fragment displayed on the chart.
+
+⁠⁠4. *Disparity Highlight :* A neatly contrasting bar graph underlines the kind of industries that feature a large disparity in income, such as Finance wherein male earnings tower over the women employees.
+
+**Benefits of the redesigned interactive bar chart:**
+
+1.  *Improved Comparability :* The baseline common to both male and female incomes and the vertical bars appearing in the new chart assists in comparing accurate income differences between males and females in different industries than doing so in the circular chart because the angles cannot be accurate.
+
+2.  *Easier Interpretation :* The modular structure and clearly labeled axes in the redesign also make it possible to track differences between males and females within each sector without much mental effort compared to their approach in the original design.
+
+3.  *Reduced Visual Clutter :* The new chart format dispenses with the mess of the circular plan, providing a precise point-by-point comparison, which occupies less space and makes patterns stand out.
+
+4.  *Highlighting Key Trends :* The numerical arrangement in the redesign is unarguably aligned to sectors with widest gap in earnings, say for example, Finance & Construction industries; Huge gaps make it quicker to recognize clear trends.
+
+## Facted line Chart (Redesigned Visual 2)
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(reshape2)
+library(scales) 
+
+
+data2 <- data.frame(
+  year = rep(2015:2019, each = 5),
+  industry = rep(c("Healthcare", "Finance", "Education", "Technology", "Retail"), times = 5),
+  male_income = c(70000, 90000, 60000, 100000, 40000,   
+                  71000, 92000, 61000, 103000, 41000,   
+                  72000, 94000, 62000, 106000, 42000,   
+                  73000, 96000, 63000, 109000, 43000,   
+                  74000, 98000, 64000, 112000, 44000),  
+  female_income = c(65000, 85000, 55000, 90000, 38000,  
+                    66000, 87000, 56000, 93000, 39000,   
+                    67000, 89000, 57000, 96000, 40000,   
+                    68000, 91000, 58000, 99000, 41000,   
+                    69000, 93000, 59000, 102000, 42000)  
+)
+
+data_melted1 <- melt(data2, id.vars = c("year", "industry"), variable.name = "gender", value.name = "income")
+
+
+k_formatter <- function(x) {
+  return(paste0(x / 1000, "k"))
+}
+
+
+ggplot(data_melted1, aes(x = year, y = income, color = gender, linetype = gender, group = interaction(gender, industry))) +
+  geom_line(size = 1) +  
+  facet_wrap(~ industry) +  
+  labs(title = "Income Growth Rate by Industry (Men vs Women)", 
+       x = "Year", 
+       y = "Income (in USD)", 
+       color = "Gender", 
+       linetype = "Gender") +
+  scale_color_manual(values = c("male_income" = "green", "female_income" = "brown"),
+                     labels = c("Men", "Women")) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_y_continuous(labels = k_formatter)  
+```
+
+The Line chart compares *income growth rates* between men and women across different industries (Education, Finance, Healthcare, Retail, and Technology) over time, from *2015 to 2019*. It uses solid and dashed lines to distinguish between the income of men and women.
+
+About the visual
+
+1.  *Industry-wise Comparison*:
+
+-   Each panel represents a different industry (Education, Finance, Healthcare, Retail, and Technology), showing income trends for both men and women within the same plot.
+-   There is a noticeable disparity between men’s and women’s income in all industries, with men consistently earning more across the years.
+
+2.  *Income Trends*:
+
+-   The graph highlights a steady increase in income for both genders across most industries from 2015 to 2019.
+-   The gap between men’s and women’s income persists, especially in industries like Finance and Technology, where men’s income shows more significant growth compared to women’s income.
+
+3.  *Color and Line Representation*:
+
+-   The *solid green line* represents the trend in men’s income, while the *solid maroon line* represents the trend in women’s income. These colors help distinguish the two genders clearly in each plot.
+-   The lines for both genders are parallel in some industries, indicating consistent disparities over time, whereas in other industries, such as Technology, the gap appears to widen.
+
+## Bubble Chart (Redesigned Visual 3)
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(scales)
+
+Employment <- c("Healthcare", "Finance", "Education", "Technology", "Retail", "Manufacturing")
+Men <- c(70, 80, 75, 85, 65, 60)
+Women <- c(75, 85, 80, 80, 70, 65)
+men_income <- c(70000, 90000, 60000, 100000, 40000, 55000)
+women_income <- c(65000, 85000, 55000, 90000, 38000, 50000)
+
+data_employment <- data.frame(
+  occupation = rep(Employment, 2),
+  satisfaction = c(Men, Women),
+  income = c(men_income, women_income),
+  gender = rep(c("Men", "Women"), each = length(Employment))
+)
+
+ggplot(data_employment, aes(x = occupation, y = satisfaction, size = income, color = gender)) +
+  geom_point(alpha = 0.7) +
+  scale_size_continuous(range = c(5, 15), labels = scales::label_number(scale = 1e-3, suffix = "k")) +
+  labs(title = "Job Satisfaction Levels by Occupation",
+       x = "Occupation", y = "Satisfaction Level (out of 100)",
+       size = "Income (in USD)", color = "Gender") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
+The bubble chart compares *Job Satisfaction Levels by Occupation*, with distinctions based on gender (men and women) and income.
+
+1.  *Axes*:
+    -   The *x-axis* represents *Occupation*, including categories such as Education, Finance, Healthcare, Manufacturing, Retail, and Technology.
+    -   The *y-axis* represents *Job Satisfaction Level* (measured on a scale from 60 to 85, out of 100).
+2.  *Bubble Size (Income Representation)*:
+    -   The size of each bubble corresponds to *Income in USD*, as shown in the legend on the right. Larger bubbles represent higher incomes (ranging from 40k to 100k USD).
+3.  *Gender Comparison*:
+    -   The chart distinguishes between *Men* (represented by blue bubbles) and *Women* (represented by red bubbles), allowing for gender-based comparisons in job satisfaction and income across occupations.
+4.  *Bubble Placement*:
+    -   Each bubble's position on the graph shows the satisfaction level for men and women in each occupation. For example, men in Technology seem to have a high satisfaction level of around 85, while women in Manufacturing have a lower satisfaction level of around 60.
+5.  *Key Insights*:
+    -   The graph reveals that in certain occupations (such as *Technology* and *Finance*), both men and women report higher job satisfaction, with higher incomes indicated by larger bubble sizes.
+    -   In contrast, *Manufacturing* shows lower satisfaction levels for both men and women, with smaller bubbles representing lower income levels.
+6.  *Dual Information Display*:
+    -   This bubble chart effectively conveys both *job satisfaction* and *income levels* in one visual, allowing for the examination of trends in both satisfaction and compensation across genders and industries.
+
+## Butterfly Chart (Redesigned Visual 4)
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(scales) 
+
+Butterfly_chart <- data.frame(
+    industry = c("Finance", "Healthcare", "Education", "Technology", "Retail", "Manufacturing"),
+    male_tenure = c(10, 12, 9, 14, 8, 11),      
+    female_tenure = c(8, 10, 7, 12, 9, 10)      
+  )
+
+
+ggplot(Butterfly_chart) +
+  geom_bar(aes(x = industry, y = -male_tenure, fill = "Male"), stat = "identity") +
+  geom_bar(aes(x = industry, y = female_tenure, fill = "Female"), stat = "identity") +
+  coord_flip() +  
+  scale_y_continuous(labels = abs) +  
+  labs(title = "Average Tenure by Industry and Gender (Butterfly Chart)",
+       x = "Industry",
+       y = "Average Tenure (Years)",
+       fill = "Gender") +
+  scale_fill_manual(values = c("Male" = "brown", "Female" = "wheat")) +
+  theme_minimal() + 
+  theme(axis.text.y = element_text(size = 12), axis.title.x = element_text(size = 14))
+```
+
+The Butterfly Chart represents *Average Tenure by Industry and Gender*.
+
+1.  *Axes*:
+    -   The *x-axis* represents *Average Tenure (Years)*, with a range from 0 to 15 years.
+    -   The *y-axis* lists different *Industries* (Technology, Retail, Manufacturing, Healthcare, Finance, and Education).
+2.  *Bar Orientation*:
+    -   The chart displays two diverging bars for each industry:
+        -   *Left side* bars (dark red) represent *Male* tenure.
+        -   *Right side* bars (light beige) represent *Female* tenure.
+3.  *Gender Comparison*:
+    -   The bars are aligned to allow direct comparison between the average tenure of *men and women* within each industry. The length of the bars indicates the average number of years men and women remain employed in the respective industries.
+4.  *Key Insights*:
+    -   In *Technology* and *Retail*, men have a significantly longer average tenure compared to women.
+    -   In *Manufacturing* and *Healthcare*, men and women have more balanced tenures, with minor differences.
+    -   *Finance* shows a closer balance but with slightly longer tenure for men.
+    -   *Education* shows a noticeable tenure difference, where women have longer tenures than men.
+
+## Time Series Plot (Redesigned Visual 5)
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(reshape2)
+library(plotly)
+
+year <- c(2018, 2019, 2020, 2021, 2022, 2023)
+male_income <- c(80000, 82000, 85000, 83700, 86000, 88000)
+female_income <- c(65000, 66000, 68000, 65700, 67000, 69000)
+
+Total_Year <- data.frame(year, male_income, female_income)
+
+
+Time_melted <- melt(Total_Year, id.vars = "year", variable.name = "gender", value.name = "income")
+
+
+p_time_series <- ggplot(Time_melted, aes(x = year, y = income, color = gender, group = gender)) +
+  geom_line(size = 1.2) +
+  geom_point(size = 3) +
+  theme_minimal() +
+  labs(title = "Interactive Time Series: Male vs Female Income Over Time",
+       x = "Year", y = "Income (in USD)") +
+  scale_color_manual(values = c("male_income" = "blue", "female_income" = "pink"),
+                     labels = c("Men", "Women"), name = "Gender")
+
+
+Answer <- ggplotly(p_time_series)
+
+
+Answer
+
+```
+
+The *Interactive Time Series Line Chart* showing *Male vs Female Income Over Time*.
+
+**About the visual:**
+
+1.  *Axes*:
+    -   The *x-axis* represents \*Year, spanning from 2018 to 2023.
+    -   The *y-axis* represents Income in USD, ranging from 65,000 to 85,000 USD.
+2.  *Time Series Trends*:
+    -   The chart shows a clear upward trend in male income, with consistent growth from 2018 to 2023.
+    -   Female income shows slight fluctuations over time but grows at a slower rate compared to male income.
+3.  *Comparison of Income Over Time*:
+    -   The gap between male and female income is visually evident, with male income consistently higher than female income throughout the time period.
+    -   The disparity in income remains relatively stable, with both lines following similar patterns but maintaining a notable difference in value.
+4.  *Interactivity*:
+    -   Since it's an *interactive* time series, the graph likely includes hover features that provide precise income values for each year when the user interacts with the chart.
+
+## Scatter Plot (Redesigned Visual 6)
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(scales) 
+
+
+industry <- c("Finance", "Manufacturing", "Agriculture", "IT", "Healthcare", "Retail Trade", 
+              "Construction", "Education", "Transportation", "Energy")
+male_income <- c(75900, 52700, 33700, 46400, 58300, 41400, 83700, 65400, 52700, 85000)
+female_income <- c(63500, 45900, 30000, 39800, 49800, 35100, 65700, 54200, 45900, 73000)
+
+
+data <- data.frame(industry, male_income, female_income)
+
+
+ggplot(data, aes(x = male_income, y = female_income, color = industry)) +
+  geom_point(size = 5) +  
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "black") +  
+  labs(title = "Scatter Plot of Male vs Female Income by Industry",
+       x = "Male Income (in USD)", y = "Female Income (in USD)", color = "Industry") +
+  theme_minimal() +
+  scale_color_brewer(palette = "Set1") +  
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),  
+        legend.position = "right")  
+
+```
+
+This is a *Scatter Plot of Male vs Female Income by Industry*.
+
+**About the Visual:**
+
+1.  *Axes*:
+    -   The *x-axis* represents *Male Income (in USD)*.
+    -   The *y-axis* represents *Female Income (in USD)*.
+2.  *Data Points*:
+    -   Each point on the scatter plot represents an industry, with the position of the point determined by the corresponding male and female incomes in that industry.
+3.  *Diagonal Line*:
+    -   A *dashed diagonal line* represents equality, where male income equals female income. Points falling on this line indicate industries where men and women earn the same amount.
+    -   Points *below the line* show industries where *male income exceeds female income*.
+    -   Points *above the line* would indicate industries where *female income exceeds male income*, although in this chart, most points fall below the line.
+4.  *Key Insights*:
+    -   Most industries show *male income exceeding female income*, as indicated by the majority of points being below the diagonal line.
+    -   The scatter plot reveals industries where the income disparity is greater, such as IT and Finance, where male income is much higher compared to female income.

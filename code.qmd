@@ -1,0 +1,194 @@
+---
+title: "Code"
+format: html
+---
+
+### 1. Code for Interactive Bar plot (Redesign Visual 1)
+
+library(dplyr)
+
+library(tidyr)
+
+library(ggplot2)
+
+library(plotly)
+
+Jobs \<- c("Construction", "Finance", "Education", "Healthcare", "Manufacturing", "IT", "Retail Trade", "Agriculture")
+
+Mincome \<- c(83700, 75900, 65400, 58300, 52700, 46400, 41400, 33700)
+
+Fincome \<- c(65700, 63500, 54200, 49800, 45900, 39800, 35100, 30000)
+
+data1 \<- data.frame(Jobs, Mincome, Fincome)
+
+melted \<- data1 %\>% pivot_longer(cols = c(Mincome, Fincome), names_to = "gender", values_to = "income")
+
+result \<- ggplot(melted, aes(x = Jobs, y = income, fill = gender)) + geom_bar(position = position_dodge(width = 0.9), stat = "identity", width = 0.7) + theme_minimal() +
+
+labs(title = "Income Comparison by Industry (Men vs Women)", x = "Industry", y = "Income (in USD)") + scale_fill_manual(values = c("Mincome" = "steelblue4", "Fincome" = "skyblue"), labels = c("Men", "Women"), name = "Gender") +
+
+theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+final_result \<- ggplotly(result)
+
+final_result
+
+### 2. Code for Faceted Line Plot (Redesign Visual 2)
+
+library(ggplot2)
+
+library(reshape2)
+
+library(scales)
+
+data2 \<- data.frame(
+
+year = rep(2015:2019, each = 5),
+
+industry = rep(c("Healthcare", "Finance", "Education", "Technology", "Retail"), times = 5),
+
+male_income = c(70000, 90000, 60000, 100000, 40000, 71000, 92000, 61000, 103000, 41000, 72000, 94000, 62000, 106000, 42000, 73000, 96000, 63000, 109000, 43000, 74000, 98000, 64000, 112000, 44000),
+
+female_income = c(65000, 85000, 55000, 90000, 38000, 66000, 87000, 56000, 93000, 39000, 67000, 89000, 57000, 96000, 40000, 68000, 91000, 58000, 99000, 41000, 69000, 93000, 59000, 102000, 42000) )
+
+data_melted1 \<- melt(data2, id.vars = c("year", "industry"), variable.name = "gender", value.name = "income")
+
+k_formatter \<- function(x) { return(paste0(x / 1000, "k")) }
+
+ggplot(data_melted1, aes(x = year, y = income, color = gender, linetype = gender, group = interaction(gender, industry))) + geom_line(size = 1) + facet_wrap(\~ industry) + labs(title = "Income Growth Rate by Industry (Men vs Women)", x = "Year", y = "Income (in USD)", color = "Gender", linetype = "Gender") +
+
+scale_color_manual(values = c("male_income" = "green", "female_income" = "brown"), labels = c("Men", "Women")) + theme_minimal() +
+
+theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+
+scale_y_continuous(labels = k_formatter)
+
+### 3. Code for Bubble chart (Redesign Visual 3)
+
+library(ggplot2)
+
+library(scales)
+
+Employment \<- c("Healthcare", "Finance", "Education", "Technology", "Retail", "Manufacturing")
+
+Men \<- c(70, 80, 75, 85, 65, 60)
+
+Women \<- c(75, 85, 80, 80, 70, 65)
+
+men_income \<- c(70000, 90000, 60000, 100000, 40000, 55000)
+
+women_income \<- c(65000, 85000, 55000, 90000, 38000, 50000)
+
+data_employment \<- data.frame( occupation = rep(Employment, 2),
+
+satisfaction = c(Men, Women),
+
+income = c(men_income, women_income),
+
+gender = rep(c("Men", "Women"), each = length(Employment))
+
+)
+
+ggplot(data_employment, aes(x = occupation, y = satisfaction, size = income, color = gender)) +
+
+geom_point(alpha = 0.7) +
+
+scale_size_continuous(range = c(5, 15), labels = scales::label_number(scale = 1e-3, suffix = "k")) +
+
+labs(title = "Job Satisfaction Levels by Occupation", x = "Occupation", y = "Satisfaction Level (out of 100)", size = "Income (in USD)", color = "Gender") +
+
+theme_minimal() +
+
+theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+### 4. Code for Butterfly Chart (Redesign Visual 4)
+
+library(ggplot2)
+
+library(scales)
+
+Employment \<- c("Healthcare", "Finance", "Education", "Technology", "Retail", "Manufacturing")
+
+Men \<- c(70, 80, 75, 85, 65, 60) Women \<- c(75, 85, 80, 80, 70, 65)
+
+men_income \<- c(70000, 90000, 60000, 100000, 40000, 55000)
+
+women_income \<- c(65000, 85000, 55000, 90000, 38000, 50000)
+
+data_employment \<- data.frame( occupation = rep(Employment, 2),
+
+satisfaction = c(Men, Women),
+
+income = c(men_income, women_income),
+
+gender = rep(c("Men", "Women"),
+
+each = length(Employment))
+
+)
+
+ggplot(data_employment, aes(x = occupation, y = satisfaction, size = income, color = gender)) +
+
+geom_point(alpha = 0.7) +
+
+scale_size_continuous(range = c(5, 15), labels = scales::label_number(scale = 1e-3, suffix = "k")) +
+
+labs(title = "Job Satisfaction Levels by Occupation", x = "Occupation", y = "Satisfaction Level (out of 100)", size = "Income (in USD)", color = "Gender") + theme_minimal() +
+
+theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+### 5. Code for Time series plot (Redesign Visual 5)
+
+library(ggplot2)
+
+library(reshape2)
+
+library(plotly)
+
+year \<- c(2018, 2019, 2020, 2021, 2022, 2023)
+
+male_income \<- c(80000, 82000, 85000, 83700, 86000, 88000)
+
+female_income \<- c(65000, 66000, 68000, 65700, 67000, 69000)
+
+Total_Year \<- data.frame(year, male_income, female_income)
+
+Time_melted \<- melt(Total_Year, id.vars = "year", variable.name = "gender", value.name = "income")
+
+p_time_series \<- ggplot(Time_melted, aes(x = year, y = income, color = gender, group = gender)) + geom_line(size = 1.2) +
+
+geom_point(size = 3) +
+
+theme_minimal() +
+
+labs(title = "Interactive Time Series: Male vs Female Income Over Time", x = "Year", y = "Income (in USD)") + scale_color_manual(values = c("male_income" = "blue", "female_income" = "pink"), labels = c("Men", "Women"), name = "Gender")
+
+Answer \<- ggplotly(p_time_series)
+
+Answer
+
+### 6. Plot for Scatter plot (Resdesign Visual 6)
+
+library(ggplot2)
+
+library(scales)
+
+industry \<- c("Finance", "Manufacturing", "Agriculture", "IT", "Healthcare", "Retail Trade", "Construction", "Education", "Transportation", "Energy")
+
+male_income \<- c(75900, 52700, 33700, 46400, 58300, 41400, 83700, 65400, 52700, 85000)
+
+female_income \<- c(63500, 45900, 30000, 39800, 49800, 35100, 65700, 54200, 45900, 73000)
+
+data \<- data.frame(industry, male_income, female_income)
+
+ggplot(data, aes(x = male_income, y = female_income, color = industry)) + geom_point(size = 5) +
+
+geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "black") +
+
+labs(title = "Scatter Plot of Male vs Female Income by Industry", x = "Male Income (in USD)", y = "Female Income (in USD)", color = "Industry") +
+
+theme_minimal() +
+
+scale_color_brewer(palette = "Set1") +
+
+theme(axis.text.x = element_text(angle = 45, hjust = 1), legend.position = "right")

@@ -1,0 +1,18 @@
+---
+title: "About"
+about:
+  template: trestles
+  image: intro.webp
+  image-shape: rectangle
+  image-width: 50em
+  links:
+    - text: Sushanth Mail
+      icon: envelope
+      href: mailto:sbuddhal@gmu.edu
+    - text: Sumanth Email
+      icon: envelope
+      href: mailto:sveluvo@gmu.edu
+    - text: Sushanth GitHub
+      icon: github
+      href: https://github.com/sushanthbuds
+---

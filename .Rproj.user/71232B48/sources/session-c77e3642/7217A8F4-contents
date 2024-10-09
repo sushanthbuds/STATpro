@@ -1,0 +1,31 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  navbar:
+    left:
+      - text: STAT Mid-Project
+        file: index.qmd
+      - text: About 
+        file: About.qmd
+      - text: Original Graph
+        file: Project.qmd
+      - text: Code
+        file: code.qmd
+      - text: Video
+        file: video.qmd
+      - text: References
+        file: References.qmd
+      
+format:
+  html:
+    theme: minty
+    css: styles.css
+    toc: true
+    toc-location: left
+    toc-depth: 5
+
+editor: visual
+
+title: "Project"
